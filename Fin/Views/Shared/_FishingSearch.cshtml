@@ -1,0 +1,47 @@
+﻿@model Fin.Models.FishingSearch
+
+<h4>FishingSearch</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="_FishingSearch">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Zipcode" class="control-label"></label>
+                <input asp-for="Zipcode" class="form-control" />
+                <span asp-validation-for="Zipcode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FishSpecies_ID" class="control-label"></label>
+                <input asp-for="FishSpecies_ID" class="form-control" />
+                <span asp-validation-for="FishSpecies_ID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FishSize_ID" class="control-label"></label>
+                <input asp-for="FishSize_ID" class="form-control" />
+                <span asp-validation-for="FishSize_ID" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Is_YouthOnly" /> @Html.DisplayNameFor(model => model.Is_YouthOnly)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Is_YouthFriendly" /> @Html.DisplayNameFor(model => model.Is_YouthFriendly)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

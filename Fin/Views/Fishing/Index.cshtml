@@ -1,0 +1,294 @@
+﻿@model Fin.ViewModels.HomeDetailsViewModel
+
+@*<p>Click the button to get your coordinates.</p>
+
+    <button onclick="getLocation()">Try It</button>
+
+    <p id="demo"></p>*@
+<style>
+    /* Set the size of the div element that contains the map */
+    #map {
+        height: 400px; /* The height is 400 pixels */
+        width: 100%; /* The width is the width of the web page */
+    }
+</style>
+@*<h3>Fin.Fish </h3>*@
+@*<div class="row">
+    <div class="col-md-3">
+        <form asp-action="Index">
+            @*@Html.HiddenFor(m => m.FishingSearchObj.Zipcode)*@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FishingSearchObj.Zipcode" class="control-label"></label>
+                <input asp-for="FishingSearchObj.Zipcode" id="Zipcode" />
+                <span asp-validation-for="FishingSearchObj.Zipcode" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FishingSearchObj.FishSpecies_ID" class="control-label"></label>
+                <select asp-for="FishingSearchObj.FishSpecies_ID" class="form-control">
+
+                    <option value=0>All Fish Species</option>
+                    <option value=1>Trout</option>
+                    <option value=2>Salmon</option>
+                </select>
+                <span asp-validation-for="FishingSearchObj.FishSpecies_ID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FishingSearchObj.FishSize_ID" class="control-label"></label>
+                <select asp-for="FishingSearchObj.FishSize_ID" class="form-control">
+                    <option value=0>All Fish Sizes</option>
+                    <option value=1>Legals</option>
+                    <option value=2>Trophy</option>
+                    <option value=3>Brood</option>
+                </select>
+                <span asp-validation-for="FishingSearchObj.FishSize_ID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FishingSearchObj.Is_YouthOnly" class="control-label"></label>
+                <input asp-for="FishingSearchObj.Is_YouthOnly" />
+                <span asp-validation-for="FishingSearchObj.Is_YouthOnly" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FishingSearchObj.Is_YouthFriendly" class="control-label"></label>
+                <input asp-for="FishingSearchObj.Is_YouthFriendly" />
+                <span asp-validation-for="FishingSearchObj.Is_YouthFriendly" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Search" class="btn-default" />
+            </div>
+        </form>
+    </div>*@
+
+    <div class="col-md-9">
+        <!--The div element for the map -->
+        <div id="map"></div>
+
+        <script>
+            // Note: This example requires that you consent to location sharing when
+            // prompted by your browser. If you see the error "The Geolocation service
+            // failed.", it means you probably did not give permission for the browser to
+            // locate you.
+            var map, infoWindow,geocoder;
+            function initMap() {
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: -34.397, lng: 150.644 },
+                    zoom: 10
+                });
+                infoWindow = new google.maps.InfoWindow;
+                geocoder = new google.maps.Geocoder;
+                  //Icons for marking Water Body Location
+                //**************************************************************
+                var iconBase =
+                    'https://listorageaccount.blob.core.windows.net/finimages/';
+
+                var icons = {
+                    fish: {
+                        icon: iconBase + 'icons8-whole-fish-16.png'
+                    },
+                    library: {
+                        icon: iconBase + 'library_maps.png'
+                    },
+                    info: {
+                        icon: iconBase + 'info-i_maps.png'
+                    }
+                };
+                //**************************************************************
+
+
+
+                // Try HTML5 geolocation.
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        var pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+
+                        infoWindow.setPosition(pos);
+                        infoWindow.setContent('Location found.');
+                        infoWindow.open(map);
+                        map.setCenter(pos);
+                        //location.reload();
+                      //  plotWaterBodies();
+                      //   var posset = {
+                      //      lat: 44.414345,
+                      //      lng: -119.445242
+                      //  };
+                      //map.setCenter(posset);
+
+                        geocodeLatLng(geocoder, map, infoWindow, pos);
+                    }, function () {
+                        handleLocationError(true, infoWindow, map.getCenter());
+                    });
+                } else {
+                    // Browser doesn't support Geolocation
+                    handleLocationError(false, infoWindow, map.getCenter());
+                }
+
+                 function plotWaterBodies() {
+                 @foreach(var item in Model.FishingInfoListObj){
+
+                     <text>
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(@item.GPSCOORDINATES_DECIMAL),
+                        icon: icons["fish"].icon,
+                        map: map,
+                        title: '@item.FishSpecies_Name fish available in @item.WaterBody_AltName.  @item.Street_Address @item.WaterBody_Description'
+
+                    });
+
+
+                    </text>
+
+                       }
+
+                }
+
+            }
+
+             function extractFromAdress(components, type) {
+                for (var i = 0; i < components.length; i++)
+                    for (var j = 0; j < components[i].types.length; j++)
+                        if (components[i].types[j] == type) return components[i].long_name;
+                return "";
+            }
+
+              function geocodeLatLng(geocoder, map, infowindow,pos) {
+                //var input = document.getElementById('latlng').value;
+                //var latlngStr = input.split(',', 2);
+                //var latlng = { lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1]) };
+                geocoder.geocode({ 'location': pos }, function (results, status) {
+                    if (status === 'OK') {
+                        if (results[0]) {
+                            map.setZoom(11);
+                            var marker = new google.maps.Marker({
+                                position: pos,
+                                map: map
+                            });
+                            infowindow.setContent(results[0].formatted_address);
+                            
+                            var postCode = extractFromAdress(results[0].address_components, "postal_code");
+                            infowindow.setContent(postCode);
+                            infowindow.open(map, marker);
+                            $("#Zipcode").val(postCode);
+                        } else {
+                            window.alert('No results found');
+                        }
+                    } else {
+                        window.alert('Geocoder failed due to: ' + status);
+                    }
+                });
+            }
+
+           
+
+            function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+                infoWindow.setPosition(pos);
+                infoWindow.setContent(browserHasGeolocation ?
+                    'Error: The Geolocation service failed.' :
+                    'Error: Your browser doesn\'t support geolocation.');
+                infoWindow.open(map);
+            }
+
+            
+
+        </script>
+        @*<script>
+            var map;
+            function initMap() {
+                map = new google.maps.Map(
+                    document.getElementById('map'),
+                    { center: new google.maps.LatLng(44.414345, -119.445242), zoom: 6 });
+
+                var iconBase =
+                    'https://listorageaccount.blob.core.windows.net/finimages/';
+
+                var icons = {
+                    fish: {
+                        icon: iconBase + 'icons8-whole-fish-16.png'
+                    },
+                    library: {
+                        icon: iconBase + 'library_maps.png'
+                    },
+                    info: {
+                        icon: iconBase + 'info-i_maps.png'
+                    }
+                };
+
+
+
+                 @foreach(var item in Model.FishingInfoListObj){
+                     <text>
+                          var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(@item.GPSCOORDINATES_DECIMAL),
+                    icon: icons["fish"].icon,
+                              map: map,
+                    title:'@item.FishSpecies_Name fish available in @item.WaterBody_AltName.  @item.Street_Address @item.WaterBody_Description'
+                          });
+
+
+                    </text>
+                       }
+                }
+
+
+
+                </script>*@
+        <!--Load the API from the specified URL
+        * The async attribute allows the browser to render the page while the API loads
+        * The key parameter will contain your own API key (which is not needed for this tutorial)
+        * The callback parameter executes the initMap() function
+        -->
+
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtEwluZoun4h2keMlqpWQMjK7Z93clYjY&callback=initMap"></script>
+
+
+    </div>
+
+</div>
+<div class="row">
+
+    @foreach (var item in Model.FishingInfoListObj)
+    {
+        <div class="col-md-4">
+            <hr />
+            <h6>@Html.ActionLink(item.WaterBody_AltName.ToString(), "FishingInfoDetail", new { WaterBodyId = item.Waterbody_ID }, null)</h6>
+            <img class="img" src="@item.WaterBody_Image" />
+            <dl>
+                <dd>
+                    @Html.DisplayFor(m => item.WaterBody_AltName) @Html.DisplayFor(m => item.City_or_County),&nbsp;@Html.DisplayFor(m => item.State)-&nbsp;@Html.DisplayFor(m => item.Zipcode)
+                </dd>
+            </dl>
+
+            <dl>
+                <dd>
+                    @Html.DisplayNameFor(m => item.Is_YouthOnly) &nbsp;&nbsp; @Html.DisplayFor(m => item.Is_YouthFriendly) @Html.DisplayNameFor(m => item.Is_YouthFriendly)
+
+
+                </dd>
+
+            </dl>
+        </div>
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+    <div>
+        <a asp-action="Index">Back toIEnumerable</a>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

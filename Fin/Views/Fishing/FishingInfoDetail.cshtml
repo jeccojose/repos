@@ -1,0 +1,58 @@
+﻿@model Fin.ViewModels.HomeDetailsViewModel
+@{
+    ViewData["Title"] = "FishingInfoDetail";
+}
+
+<div>
+    <h4> @Html.DisplayFor(model => model.FishingInfoDetailObj.WaterBody_AltName)</h4>
+    <dl>
+        <dd>@Html.DisplayFor(model => model.FishingInfoDetailObj.FishSpecies_Name) @Html.DisplayFor(model => model.FishingInfoDetailObj.City_or_County),&nbsp;@Html.DisplayFor(model => model.FishingInfoDetailObj.State)-&nbsp;@Html.DisplayFor(model => model.FishingInfoDetailObj.Zipcode)</dd>
+    </dl>
+    <hr />
+    <dl>
+        <dd>
+            @Html.DisplayFor(model => model.FishingInfoDetailObj.Is_YouthOnly) @Html.DisplayNameFor(model => model.FishingInfoDetailObj.Is_YouthOnly) &nbsp;&nbsp; @Html.DisplayFor(model => model.FishingInfoDetailObj.Is_YouthFriendly) @Html.DisplayNameFor(model => model.FishingInfoDetailObj.Is_YouthFriendly)
+        </dd>
+        <dt>
+            Last stocked on
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FishingInfoDetailObj.Stocking_StartDay) - @Html.DisplayFor(model => model.FishingInfoDetailObj.Stocking_EndDay)
+        </dd>
+        <dd>
+            <b>@Html.DisplayNameFor(model => model.FishingInfoDetailObj.Legals)</b> - @Html.DisplayFor(model => model.FishingInfoDetailObj.Legals)&nbsp;&nbsp;
+            <b>@Html.DisplayNameFor(model => model.FishingInfoDetailObj.Trophy)</b> - @Html.DisplayFor(model => model.FishingInfoDetailObj.Trophy)&nbsp;&nbsp;
+            <b>@Html.DisplayNameFor(model => model.FishingInfoDetailObj.Brood)</b> - @Html.DisplayFor(model => model.FishingInfoDetailObj.Brood)&nbsp;&nbsp;
+            <b>@Html.DisplayNameFor(model => model.FishingInfoDetailObj.Total)</b> - @Html.DisplayFor(model => model.FishingInfoDetailObj.Total)
+        </dd>
+
+
+    </dl>
+
+
+    <dl class="dl-horizontal">
+
+
+        <dd>
+            @Html.DisplayFor(model => model.FishingInfoDetailObj.WaterBody_Description)
+        </dd>
+        </br>
+
+
+
+
+
+
+    </dl>
+    <hr />
+</div>
+<div>
+    @*<a asp-action="Edit" asp-route-id="@model.FishingInfoDetailObj.Waterbody_ID">Edit</a>*@ |
+    <a asp-action="index">Back toIEnumerable</a>
+</div>
+
+
+
+
+
+
